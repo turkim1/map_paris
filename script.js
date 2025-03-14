@@ -111,59 +111,58 @@
         }
     }
 
-    // Generate isochrones only for stations within Paris
-    async function getIsochrones(stations, walkTime) {
-        const apiKey = "5b3ce3597851110001cf6248c77cc4882b4d4ff096993189c163cf62";
-        let isochrones = [];
+// Generate isochrones only for stations within Paris
+async function getIsochrones(stations, walkTime) {
+    let isochrones = [];
 
-        try {
-            for (const station of stations) {
-                const url = `https://api.openrouteservice.org/v2/isochrones/foot-walking`;
-                const body = {
-                    locations: [[station.lon, station.lat]],
-                    range: [walkTime * 60],
-                    range_type: 'time'
-                };
+    try {
+        for (const station of stations) {
+            const body = {
+                locations: [[station.lon, station.lat]],
+                range: [walkTime * 60],
+                range_type: 'time'
+            };
 
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': apiKey,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(body)
-                });
+            const response = await fetch('/api/isochrones', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
 
-                if (!response.ok) throw new Error('Failed to fetch isochrone');
-                
-                const data = await response.json();
-                
-                // Clip isochrone to Paris boundary
-                const intersection = turf.intersect(
-                    data.features[0],
-                    parisBoundaryGeoJSON
-                );
-
-                if (intersection) {
-                    const polygon = L.geoJSON(intersection, {
-                        style: {
-                            color: '#3388ff',
-                            weight: 2,
-                            opacity: 0.5,
-                            fillOpacity: 0.2
-                        }
-                    }).addTo(isochronesLayer);
-                    
-                    isochrones.push(intersection);
-                }
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Failed to fetch isochrone: ${errorData.error || response.statusText}`);
             }
-            return isochrones;
-        } catch (error) {
-            console.error('Error generating isochrones:', error);
-            return [];
-        }
-    }
+            
+            const data = await response.json();
+            
+            // Clip isochrone to Paris boundary
+            const intersection = turf.intersect(
+                data.features[0],
+                parisBoundaryGeoJSON
+            );
 
+            if (intersection) {
+                const polygon = L.geoJSON(intersection, {
+                    style: {
+                        color: '#3388ff',
+                        weight: 2,
+                        opacity: 0.5,
+                        fillOpacity: 0.2
+                    }
+                }).addTo(isochronesLayer);
+                
+                isochrones.push(intersection);
+            }
+        }
+        return isochrones;
+    } catch (error) {
+        console.error('Error generating isochrones:', error);
+        return [];
+    }
+}
     // Get places within Paris and within isochrone
     async function getPlaces(isochrone) {
         try {
