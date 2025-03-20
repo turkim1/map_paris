@@ -36,43 +36,43 @@ async function init() {
 // Event handlers
 function setupEventListeners() {
     const lineSelect = document.getElementById('lineSelect');
-    const generateIsochrones = document.getElementById('generateIsochrones');
-    const findPlacesBtn = document.getElementById('findPlaces');
+    const placeTypeSelect = document.getElementById("placeTypeSelect");
+    const distanceSelect = document.getElementById("distanceSelect");
 
-    // Handle multi-select (line selection)
-    lineSelect.addEventListener('change', (e) => {
+    // When selecting lines
+    lineSelect.addEventListener('change', async (e) => {
         const selectedOptions = Array.from(e.target.selectedOptions);
         const selectedLines = selectedOptions.map(opt => opt.value);
 
-        // Reset iso cache when lines change
-        if (JSON.stringify(selectedLines) !== JSON.stringify(lastSelectedLines)) {
+        // Clear everything when unselecting all lines
+        if (selectedLines.length === 0) {
+            showLoading('Clearing map...');
+            clearLayers(['markers', 'isochrones', 'places']);
             cachedIsochrones = null;
-            lastSelectedLines = [...selectedLines];
-        }
-
-        if (selectedLines.length > 0) {
-            displayStations(selectedLines, stationsGeoJSON, parisBoundaryGeoJSON, map);
-        } else {
-            clearLayers(['markers']);
-        }
-    });
-
-    // GENERATE ISOCHRONES BUTTON
-    generateIsochrones.addEventListener("click", async () => {
-        const selectedOptions = Array.from(lineSelect.selectedOptions);
-        const selectedLines = selectedOptions.map(opt => opt.value);
-        const walkTime = parseInt(document.getElementById("distanceSelect").value);
-
-        if (selectedLines.length < 2) {
-            alert('Please select at least two transport lines');
+            lastSelectedLines = [];
+            placeTypeSelect.disabled = true;
+            hideLoading();
             return;
         }
 
-        clearLayers(['isochrones']);
+        showLoading('Loading stations...');
+        displayStations(selectedLines, stationsGeoJSON, parisBoundaryGeoJSON, map);
+        lastSelectedLines = selectedLines;
+        hideLoading();
+    });
 
+    // When generating isochrones
+    document.getElementById("generateIsochrones").addEventListener("click", async () => {
+        if (lastSelectedLines.length < 2) {
+            alert('Please select at least two lines.');
+            return;
+        }
+
+        showLoading('Generating isochrones...');
+        clearLayers(['isochrones', 'places']);
         const allIsochrones = [];
 
-        for (const line of selectedLines) {
+        for (const line of lastSelectedLines) {
             const lineStations = stationsGeoJSON.features
                 .filter(feature =>
                     feature.properties.res_com === line &&
@@ -90,6 +90,7 @@ function setupEventListeners() {
 
             if (lineStations.length === 0) continue;
 
+            const walkTime = parseInt(distanceSelect.value);
             const isochrone = await getIsochrones(lineStations, walkTime, parisBoundaryGeoJSON);
             if (isochrone) {
                 allIsochrones.push(isochrone);
@@ -97,45 +98,59 @@ function setupEventListeners() {
         }
 
         if (allIsochrones.length < 2) {
-            alert('Please select at least two lines with stations in Paris.');
+            alert('No intersection found. Try other lines.');
+            hideLoading();
             return;
         }
 
         cachedIsochrones = calculateIntersections(allIsochrones);
-
-        if (!cachedIsochrones) {
-            alert('No overlapping area found between lines.');
-            return;
-        }
-
-        // Optionally display isochrones layer here
-        console.log('Isochrones generated and cached');
+        placeTypeSelect.disabled = false;
+        hideLoading();
     });
 
-    // FIND PLACES BUTTON
-    document.getElementById("placeTypeSelect").addEventListener("change", async () => {
+    // When changing place type
+    placeTypeSelect.addEventListener("change", async () => {
         if (!cachedIsochrones) {
-            alert('Please generate isochrones first.');
             return;
         }
-    
-        const selectedLines = lastSelectedLines;
-        const placeType = document.getElementById("placeTypeSelect").value;
-    
+
+        showLoading('Loading places...');
         clearLayers(['places']);
-    
+        const placeType = placeTypeSelect.value;
         const places = await getPlaces(cachedIsochrones, placeType);
-        displayPlaces(places, currentStations, selectedLines);
-    
-        // Fit bounds to places
-        const layersToFit = [];
-        placesLayer.eachLayer(layer => layersToFit.push(layer));
-        const bounds = L.featureGroup(layersToFit).getBounds();
-        if (bounds.isValid()) {
-            map.fitBounds(bounds);
-        }
+        displayPlaces(places, currentStations, lastSelectedLines);
+        hideLoading();
     });
 }
+
+// loading message
+function showLoading(message) {
+    let loader = document.getElementById('loadingMessage');
+    if (!loader) {
+        loader = document.createElement('div');
+        loader.id = 'loadingMessage';
+        loader.style.position = 'fixed';
+        loader.style.top = '20px';
+        loader.style.left = '50%';
+        loader.style.transform = 'translateX(-50%)';
+        loader.style.background = 'rgba(0,0,0,0.8)';
+        loader.style.color = '#fff';
+        loader.style.padding = '10px 20px';
+        loader.style.borderRadius = '5px';
+        loader.style.zIndex = 10000;
+        document.body.appendChild(loader);
+    }
+    loader.innerText = message;
+    loader.style.display = 'block';
+}
+
+function hideLoading() {
+    const loader = document.getElementById('loadingMessage');
+    if (loader) {
+        loader.style.display = 'none';
+    }
+}
+
 // Start the application
 document.addEventListener('DOMContentLoaded', () => {
     init();
