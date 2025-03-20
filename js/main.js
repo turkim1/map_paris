@@ -100,7 +100,7 @@ function setupEventListeners() {
 
         // Fetch and show places inside intersection
         const places = await getPlaces(unionedIntersections, placeType);
-        displayPlaces(places, currentStations);
+        displayPlaces(places, currentStations, selectedLines);
 
         // Fit bounds to show all places
         const layersToFit = [];

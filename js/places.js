@@ -46,34 +46,40 @@ export async function getPlaces(polygon, placeType) {
     }
 }
 
-export function displayPlaces(places, currentStations) {
+export function displayPlaces(places, currentStations, selectedLines = []) {
     placesLayer.clearLayers();
 
     places.forEach(place => {
         const placePoint = turf.point([place.lon, place.lat]);
-    
-        // Flatten all stations into one collection for nearest search
-        const allStations = Object.values(currentStations).flat();
-        const stationFeatures = allStations.map(st => 
-            turf.point([st.lon, st.lat], { name: st.name, line: st.line })
-        );
-        const stationCollection = turf.featureCollection(stationFeatures);
-    
-        const nearest = turf.nearestPoint(placePoint, stationCollection);
-        const nearestStationName = nearest.properties.name || "Unknown station";
-        const nearestLine = nearest.properties.line || "Unknown line";
-    
+        
+        let nearestStationsText = '';
+
+        selectedLines.forEach(line => {
+            const stations = currentStations[line] || [];
+            if (stations.length === 0) return;
+
+            const stationFeatures = stations.map(st =>
+                turf.point([st.lon, st.lat], { name: st.name, line: st.line })
+            );
+            const stationCollection = turf.featureCollection(stationFeatures);
+
+            const nearest = turf.nearestPoint(placePoint, stationCollection);
+            if (nearest && nearest.properties) {
+                nearestStationsText += `Nearest station to ${line}: ${nearest.properties.name}<br>`;
+            }
+        });
+
         const icon = L.divIcon({
             className: 'place-marker',
             html: getIconForPlace(place.type),
             iconSize: [20, 20]
         });
-    
+
         L.marker([place.lat, place.lon], { icon })
             .bindPopup(`
                 <b>${place.name}</b><br>
                 Type: ${place.type}<br>
-                Nearest station: ${nearestStationName} (${nearestLine})
+                ${nearestStationsText || "No stations nearby"}
             `)
             .addTo(placesLayer);
     });
