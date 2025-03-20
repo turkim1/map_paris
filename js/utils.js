@@ -43,6 +43,13 @@ export function getLogoForLine(line) {
         "METRO 13": `${metroBase}picto-ligne-LIGIDFMC01383.1742443537.svg`,
         "METRO 14": `${metroBase}picto-ligne-LIGIDFMC01384.1742443537.svg`,
 
+        // RER lines
+        "RER A": `https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Paris_transit_icons_-_RER_A.svg/1024px-Paris_transit_icons_-_RER_A.svg.png`,
+        "RER B": `https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Paris_transit_icons_-_RER_B.svg/1024px-Paris_transit_icons_-_RER_B.svg.png`,
+        "RER C": `https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Paris_transit_icons_-_RER_C.svg/1024px-Paris_transit_icons_-_RER_C.svg.png`,
+        "RER D": `https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Paris_transit_icons_-_RER_D.svg/1024px-Paris_transit_icons_-_RER_D.svg.png`,
+        "RER E": `https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Paris_transit_icons_-_RER_E.svg/1024px-Paris_transit_icons_-_RER_E.svg.png`,
+
         // Tram lines
         "TRAM 1": `${tramBase}picto-ligne-LIGIDFMC01389.1742443537.svg`,
         "TRAM 2": `${tramBase}picto-ligne-LIGIDFMC01390.1742443537.svg`,
@@ -53,14 +60,6 @@ export function getLogoForLine(line) {
         "TRAM 6": `${tramBase}picto-ligne-LIGIDFMC01395.1742443537.svg`,
         "TRAM 7": `${tramBase}picto-ligne-LIGIDFMC01396.1742443537.svg`,
         "TRAM 8": `${tramBase}picto-ligne-LIGIDFMC01397.1742443537.svg`,
-
-                // RER lines
-        "RER A": `https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Paris_transit_icons_-_RER_A.svg/1024px-Paris_transit_icons_-_RER_A.svg.png`,
-        "RER B": `https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Paris_transit_icons_-_RER_B.svg/1024px-Paris_transit_icons_-_RER_B.svg.png`,
-        "RER C": `https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Paris_transit_icons_-_RER_C.svg/1024px-Paris_transit_icons_-_RER_C.svg.png`,
-        "RER D": `https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Paris_transit_icons_-_RER_D.svg/1024px-Paris_transit_icons_-_RER_D.svg.png`,
-        "RER E": `https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Paris_transit_icons_-_RER_E.svg/1024px-Paris_transit_icons_-_RER_E.svg.png`,
-
     };
 
     return logos[line] || 'https://upload.wikimedia.org/wikipedia/commons/e/ec/RedDot.svg';
