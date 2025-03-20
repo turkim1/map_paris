@@ -10,6 +10,10 @@ let stationsGeoJSON = null;
 let parisBoundaryGeoJSON = null;
 let map = null;
 
+let cachedIsochrones = null;
+let lastSelectedLines = [];
+
+
 // Initialize app
 async function init() {
     map = initMap();
@@ -31,10 +35,21 @@ async function init() {
 
 // Event handlers
 function setupEventListeners() {
+    const lineSelect = document.getElementById('lineSelect');
+    const generateIsochrones = document.getElementById('generateIsochrones');
+    const findPlacesBtn = document.getElementById('findPlaces');
+
     // Handle multi-select (line selection)
-    document.getElementById('lineSelect').addEventListener('change', (e) => {
+    lineSelect.addEventListener('change', (e) => {
         const selectedOptions = Array.from(e.target.selectedOptions);
         const selectedLines = selectedOptions.map(opt => opt.value);
+
+        // Reset iso cache when lines change
+        if (JSON.stringify(selectedLines) !== JSON.stringify(lastSelectedLines)) {
+            cachedIsochrones = null;
+            lastSelectedLines = [...selectedLines];
+        }
+
         if (selectedLines.length > 0) {
             displayStations(selectedLines, stationsGeoJSON, parisBoundaryGeoJSON, map);
         } else {
@@ -42,25 +57,21 @@ function setupEventListeners() {
         }
     });
 
-    // Find places button
-    document.getElementById("findPlaces").addEventListener("click", async () => {
-        const select = document.getElementById("lineSelect");
-        const selectedOptions = Array.from(select.selectedOptions);
+    // GENERATE ISOCHRONES BUTTON
+    generateIsochrones.addEventListener("click", async () => {
+        const selectedOptions = Array.from(lineSelect.selectedOptions);
         const selectedLines = selectedOptions.map(opt => opt.value);
-
         const walkTime = parseInt(document.getElementById("distanceSelect").value);
-        const placeType = document.getElementById("placeTypeSelect").value;
 
         if (selectedLines.length < 2) {
             alert('Please select at least two transport lines');
             return;
         }
 
-        clearLayers(['isochrones', 'places']);
+        clearLayers(['isochrones']);
 
         const allIsochrones = [];
 
-        // Batch each line
         for (const line of selectedLines) {
             const lineStations = stationsGeoJSON.features
                 .filter(feature =>
@@ -89,30 +100,42 @@ function setupEventListeners() {
             alert('Please select at least two lines with stations in Paris.');
             return;
         }
-        
-        // Calculate intersections
-        const unionedIntersections = calculateIntersections(allIsochrones);
-        
-        if (!unionedIntersections) {
+
+        cachedIsochrones = calculateIntersections(allIsochrones);
+
+        if (!cachedIsochrones) {
             alert('No overlapping area found between lines.');
             return;
         }
 
-        // Fetch and show places inside intersection
-        const places = await getPlaces(unionedIntersections, placeType);
-        displayPlaces(places, currentStations, selectedLines);
+        // Optionally display isochrones layer here
+        console.log('Isochrones generated and cached');
+    });
 
-        // Fit bounds to show all places
+    // FIND PLACES BUTTON
+    document.getElementById("placeTypeSelect").addEventListener("change", async () => {
+        if (!cachedIsochrones) {
+            alert('Please generate isochrones first.');
+            return;
+        }
+    
+        const selectedLines = lastSelectedLines;
+        const placeType = document.getElementById("placeTypeSelect").value;
+    
+        clearLayers(['places']);
+    
+        const places = await getPlaces(cachedIsochrones, placeType);
+        displayPlaces(places, currentStations, selectedLines);
+    
+        // Fit bounds to places
         const layersToFit = [];
         placesLayer.eachLayer(layer => layersToFit.push(layer));
-        
         const bounds = L.featureGroup(layersToFit).getBounds();
         if (bounds.isValid()) {
             map.fitBounds(bounds);
         }
     });
 }
-
 // Start the application
 document.addEventListener('DOMContentLoaded', () => {
     init();
