@@ -12,18 +12,47 @@
         <select id="lineSelect">
             <option value="">Select Line</option>
         </select>
+        
         <select id="distanceSelect">
             <option value="5">5 minutes</option>
             <option value="10">10 minutes</option>
             <option value="15">15 minutes</option>
+            <option value="20">20 minutes</option>
         </select>
+        
+        <select id="placeTypeSelect">
+            <option value="arts_centre">Arts Centre</option>
+            <option value="atm">ATM</option>
+            <option value="bar">Bar</option>
+            <option value="biergarten">Biergarten</option>
+            <option value="cafe">Cafe</option>
+            <option value="cinema">Cinema</option>
+            <option value="fast_food">Fast Food</option>
+            <option value="food_court">Food Court</option>
+            <option value="ice_cream">Ice Cream</option>
+            <option value="library">Library</option>
+            <option value="mall">Shopping Mall</option>
+            <option value="marketplace">Marketplace</option>
+            <option value="museum">Museum</option>
+            <option value="nightclub">Nightclub</option>
+            <option value="park">Park</option>
+            <option value="pharmacy">Pharmacy</option>
+            <option value="pub">Pub</option>
+            <option value="restaurant" selected>Restaurant</option>
+            <option value="supermarket">Supermarket</option>
+            <option value="theatre">Theatre</option>
+        </select>
+        
+    
         <button id="findPlaces">Find Places</button>
     </div>
+    
     <div id="map"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
     <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
     
     <script src="script.js"></script>
+
 </body>
 </html>

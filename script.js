@@ -164,7 +164,7 @@ async function getIsochrones(stations, walkTime) {
     }
 }
     // Get places within Paris and within isochrone
-    async function getPlaces(isochrone) {
+    async function getPlaces(isochrone, placeType) {
         try {
             const bounds = L.geoJSON(isochrone).getBounds();
             const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
@@ -173,8 +173,7 @@ async function getIsochrones(stations, walkTime) {
                 [out:json][timeout:25];
                 area["boundary"="administrative"]["admin_level"="8"]["name"="Paris"]->.paris;
                 (
-                    node["amenity"="restaurant"](area.paris)(${bbox});
-                    node["amenity"="bar"](area.paris)(${bbox});
+                    node["amenity"="${placeType}"](area.paris)(${bbox});
                 );
                 out body;
             `;
@@ -195,6 +194,7 @@ async function getIsochrones(stations, walkTime) {
             return [];
         }
     }
+    
 
     // Event listener for line select
     document.getElementById("lineSelect").addEventListener("change", (event) => {
@@ -210,36 +210,36 @@ async function getIsochrones(stations, walkTime) {
     document.getElementById("findPlaces").addEventListener("click", async () => {
         const selectedLine = document.getElementById("lineSelect").value;
         const walkTime = parseInt(document.getElementById("distanceSelect").value);
-        
+        const placeType = document.getElementById("placeTypeSelect").value;
+    
         if (!selectedLine) {
             alert('Please select a transport line');
             return;
         }
-
+    
         if (currentStations.length === 0) {
             alert('No stations found for selected line within Paris');
             return;
         }
-
-        // Clear previous isochrones and places
+    
         clearLayers(['isochrones', 'places']);
-
-        // Generate isochrones and find places
+    
         const isochrones = await getIsochrones(currentStations, walkTime);
         for (const isochrone of isochrones) {
-            const places = await getPlaces(isochrone);
+            const places = await getPlaces(isochrone, placeType);
             places.forEach(place => {
                 const icon = L.divIcon({
                     className: 'place-marker',
-                    html: place.type === 'restaurant' ? '🍽️' : '🍺',
+                    html: getIconForPlace(placeType),
                     iconSize: [20, 20]
                 });
-
+    
                 L.marker([place.lat, place.lon], {icon})
                     .bindPopup(`<b>${place.name}</b><br>${place.type}`)
                     .addTo(placesLayer);
             });
         }
+    
 
         // Fit map to show all markers and places
         const bounds = L.featureGroup([markersLayer, placesLayer]).getBounds();
