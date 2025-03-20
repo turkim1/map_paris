@@ -1,41 +1,124 @@
+/* Map Styles */
 #map {
     height: 600px;
     width: 100%;
     margin: 20px 0;
 }
 
-#controls {
+/* Controls Container */
+.controls {
     margin: 20px 0;
     display: flex;
     gap: 20px;
-    align-items: center;
+    align-items: flex-start;
     flex-wrap: wrap;
 }
 
-select, button {
-    padding: 8px;
+/* Shared Styles for native selects */
+select {
+    padding: 10px;
     border-radius: 4px;
     border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+    width: 200px;
+    font-size: 14px;
+    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px 6px;
 }
 
+/* Button Styling */
 button {
     background-color: #4CAF50;
     color: white;
     border: none;
     cursor: pointer;
     padding: 10px 20px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
     background-color: #45a049;
 }
 
+/* Choices.js container styling */
+.choices {
+    width: 300px;
+}
+
+.choices__inner {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-height: 44px;
+    padding: 6px 10px;;
+    background: #fff;
+    cursor: pointer;
+    box-sizing: border-box;
+    font-size: 12px;
+    z-index: 1000000;
+}
+
+.choices__placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+/* Choices dropdown */
+.choices__list--dropdown,
+.choices__list[aria-expanded] {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 1000000;
+}
+
+/* Choices items inside dropdown */
+.choices__item--choice {
+    padding: 8px 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.choices__item--choice:hover {
+    background: #f0f0f0;
+}
+
+/* Selected tags (multi-select items) */
+.choices__list--multiple .choices__item {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 5px 8px;
+    font-size: 13px;
+}
+
+/* Remove button inside selected tags */
+.choices__list--multiple .choices__item .choices__button {
+    color: white;
+    opacity: 0.8;
+}
+
+.choices__list--multiple .choices__item .choices__button:hover {
+    opacity: 1;
+}
+
+/* Marker popup style */
 .place-marker {
     text-align: center;
     line-height: 20px;
     font-size: 16px;
 }
 
+/* Loader */
 .loading-message {
     position: fixed;
     top: 50%;

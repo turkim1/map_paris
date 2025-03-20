@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paris Station Finder</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="controls">
-        <select id="lineSelect">
-            <option value="">Select Line</option>
-        </select>
+        <select id="lineSelect" multiple></select>
+
         
         <select id="distanceSelect">
             <option value="5">5 minutes</option>
@@ -49,10 +49,16 @@
     
     <div id="map"></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
-    <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
-    
-    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>  <!-- Leaflet JS -->
+    <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script> <!-- Turf.js JS -->
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script> <!-- Choices.js JS -->
+
+
+    <script type="module" src="js/main.js"></script>
+
+    <!-- 
+<script src="script.js"></script>
+    -->
 
 </body>
 </html>
