@@ -104,7 +104,10 @@ function setupEventListeners() {
         }
 
         cachedIsochrones = calculateIntersections(allIsochrones);
+        document.getElementById('placeTypeContainer').style.display = 'block';
         placeTypeSelect.disabled = false;
+        
+
         hideLoading();
     });
 
@@ -121,6 +124,43 @@ function setupEventListeners() {
         displayPlaces(places, currentStations, lastSelectedLines);
         hideLoading();
     });
+
+    // When restting
+    document.getElementById("resetApp").addEventListener("click", () => {
+        showLoading('Resetting...');
+    
+        // Clear map layers
+        clearLayers(['markers', 'isochrones', 'places']);
+    
+        // Reset form controls
+        const lineSelect = document.getElementById('lineSelect');
+        const placeTypeSelect = document.getElementById('placeTypeSelect');
+        const distanceSelect = document.getElementById('distanceSelect');
+    
+        if (lineSelect._choices) {
+            // Clear all selected items
+            lineSelect._choices.clearStore(); 
+            lineSelect._choices.removeActiveItems();
+        } else {
+            // Fallback for native select
+            lineSelect.selectedIndex = -1;
+        }
+    
+        placeTypeSelect.selectedIndex = 0;
+        placeTypeSelect.disabled = true;
+    
+        distanceSelect.selectedIndex = 0;
+    
+        // Hide step 3 dropdown (places dropdown)
+        document.getElementById('placeTypeContainer').style.display = 'none';
+    
+        // Reset cached variables
+        cachedIsochrones = null;
+        lastSelectedLines = [];
+    
+        hideLoading();
+    });
+    
 }
 
 // loading message
