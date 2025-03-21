@@ -121,6 +121,13 @@ function setupEventListeners() {
         clearLayers(['places']);
         const placeType = placeTypeSelect.value;
         const places = await getPlaces(cachedIsochrones, placeType);
+
+        if (!places || places.length === 0) {
+            alert('No places found in this area. Try another type!');
+            hideLoading();
+            return;
+        }
+        
         displayPlaces(places, currentStations, lastSelectedLines);
         const intersectionBounds = L.geoJSON(cachedIsochrones).getBounds();
         map.fitBounds(intersectionBounds, { padding: [20, 20] });
