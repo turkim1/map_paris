@@ -122,6 +122,8 @@ function setupEventListeners() {
         const placeType = placeTypeSelect.value;
         const places = await getPlaces(cachedIsochrones, placeType);
         displayPlaces(places, currentStations, lastSelectedLines);
+        const intersectionBounds = L.geoJSON(cachedIsochrones).getBounds();
+        map.fitBounds(intersectionBounds, { padding: [20, 20] });
         hideLoading();
     });
 
