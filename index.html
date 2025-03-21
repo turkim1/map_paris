@@ -8,52 +8,119 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
+    <!-- Welcome message dialog -->
+    <dialog id="welcome">
+            <h2>Welcome to Paris Places near Stations Finder 🚇</h2>
+            <p>
+                This tool helps you find points of interest (restaurants, cafes, bars, etc.) within walking distance from intersections of multiple Paris transport lines.
+            </p>
+            <ol>
+                <li><strong>Select at least 2 transport lines</strong> from the dropdown.</li>
+                <li><strong>Choose your walking time</strong> (e.g., 10 minutes).</li>
+                <li>Click <strong>Generate Isochrones</strong> to calculate overlapping walking zones.</li>
+                <li>Finally, select the type of place you'd like to find (e.g., restaurants, parks).</li>
+            </ol>
+            <p>Reset at any time to start over. Enjoy exploring Paris! 🇫🇷</p>
+        <button id="close-dialog">Close</button>
+    </dialog>
+
     <div class="controls">
-        <select id="lineSelect" multiple></select>
+
+        <!-- STEP 1 -->
+        <div class="control-group">
+            <label for="lineSelect"><strong>Select transport lines:</strong></label>
+            <select id="lineSelect" multiple></select>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="control-group">
+            <label for="distanceSelect"><strong>Select walking time:</strong></label>
+            <select id="distanceSelect">
+                <option value="5">5 minutes</option>
+                <option value="10">10 minutes</option>
+                <option value="15">15 minutes</option>
+                <option value="20">20 minutes</option>
+            </select>
+        </div>
+
+        <!-- STEP 3 (appears after isochrones generated) -->
+        <div class="control-group" id="placeTypeContainer" style="display: none;">
+            <label for="placeTypeSelect"><strong>Select place type:</strong></label>
+            <select id="placeTypeSelect">
+                
+                <optgroup label="Food & Drinks">
+                    <option value="bar">Bar</option>
+                    <option value="biergarten">Biergarten</option>
+                    <option value="pub">Pub</option>
+                    <option value="cafe">Cafe</option>
+                    <option value="restaurant" selected>Restaurant</option>
+                    <option value="fast_food">Fast Food</option>
+                    <option value="ice_cream">Ice Cream</option>
+                    <option value="food_court">Food Court</option>
+                </optgroup>
+        
+                <optgroup label="Culture & Leisure">
+                    <option value="cinema">Cinema</option>
+                    <option value="museum">Museum</option>
+                    <option value="theatre">Theatre</option>
+                    <option value="nightclub">Nightclub</option>
+                    <option value="arts_centre">Arts Centre</option>
+                    <option value="library">Library</option>
+                    <option value="park">Park</option>
+                </optgroup>
+        
+                <optgroup label="Shops & Services">
+                    <option value="mall">Shopping Mall</option>
+                    <option value="marketplace">Marketplace</option>
+                    <option value="supermarket">Supermarket</option>
+                    <option value="pharmacy">Pharmacy</option>
+                    <option value="atm">ATM</option>
+                </optgroup>
+        
+            </select>
+        </div>
 
         
-        <select id="distanceSelect">
-            <option value="5">5 minutes</option>
-            <option value="10">10 minutes</option>
-            <option value="15">15 minutes</option>
-            <option value="20">20 minutes</option>
-        </select>
-        
-        <select id="placeTypeSelect">
-            <option value="arts_centre">Arts Centre</option>
-            <option value="atm">ATM</option>
-            <option value="bar">Bar</option>
-            <option value="biergarten">Biergarten</option>
-            <option value="cafe">Cafe</option>
-            <option value="cinema">Cinema</option>
-            <option value="fast_food">Fast Food</option>
-            <option value="food_court">Food Court</option>
-            <option value="ice_cream">Ice Cream</option>
-            <option value="library">Library</option>
-            <option value="mall">Shopping Mall</option>
-            <option value="marketplace">Marketplace</option>
-            <option value="museum">Museum</option>
-            <option value="nightclub">Nightclub</option>
-            <option value="park">Park</option>
-            <option value="pharmacy">Pharmacy</option>
-            <option value="pub">Pub</option>
-            <option value="restaurant" selected>Restaurant</option>
-            <option value="supermarket">Supermarket</option>
-            <option value="theatre">Theatre</option>
-        </select>
-        
-        <button id="generateIsochrones">Generate Isochrones</button>
+        <!-- ACTION BUTTON -->
+        <div class="control-group">
+            <button id="generateIsochrones">Generate Isochrones</button>
+        </div>
+
+        <!-- RESET BUTTON -->
+        <div class="control-group">
+            <button id="resetApp">Reset Map</button>
+        </div>
+
+        <!-- Optional Loading message -->
+        <div id="loadingMessage" style="display:none;">Loading...</div>
 
     </div>
-    
+
     <div id="map"></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>  <!-- Leaflet JS -->
-    <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script> <!-- Turf.js JS -->
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script> <!-- Choices.js JS -->
+    <script>
+        // Show the dialog on page load
+        const welcomeDialog = document.getElementById('welcome');
+        welcomeDialog.showModal();
 
+        // Close dialog button functionality
+        document.getElementById('close-dialog').addEventListener('click', function() {
+            welcomeDialog.close();
+        });
 
+        // Reopen instructions dialog when the button is clicked
+        document.getElementById('show-instructions').addEventListener('click', function() {
+            welcomeDialog.showModal();
+        });
+    </script>
+
+    <!-- External scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script type="module" src="js/main.js"></script>
 
     <!-- 
