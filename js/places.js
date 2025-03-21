@@ -77,8 +77,9 @@ export function displayPlaces(places, currentStations, selectedLines = []) {
 
         L.marker([place.lat, place.lon], { icon })
             .bindPopup(`
-                <b>${place.name}</b><br>
-                Type: ${place.type}<br>
+                <strong>${place.name}</strong><br>
+                <b>Type:</b> ${place.type}<br>
+                <b>Address:</b> ${place.address}<br>
                 ${nearestStationsText || "No stations nearby"}
             `)
             .addTo(placesLayer);
