@@ -1,32 +1,50 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
 /* Map Styles */
 #map {
     height: 600px;
     width: 100%;
     margin: 20px 0;
+    z-index: 0;
 }
 
 /* Controls Container */
 .controls {
-    margin: 20px 0;
     display: flex;
+    flex-direction: column;
     gap: 20px;
-    align-items: flex-start;
-    flex-wrap: wrap;
+    padding: 20px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #ddd;
 }
 
-/* Shared Styles for native selects */
+/* Control Group */
+.control-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.control-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+/* Select Dropdowns */
 select {
     padding: 10px;
     border-radius: 4px;
     border: 1px solid #ccc;
     background: #fff;
-    cursor: pointer;
-    width: 200px;
+    width: 250px;
     font-size: 14px;
     box-sizing: border-box;
     appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDE2IDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEuNSAxbDUuNSA1IDUuNS01IiBzdHJva2U9IiM3Nzc3NzciIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==');
     background-repeat: no-repeat;
     background-position: right 10px center;
     background-size: 10px 6px;
@@ -40,28 +58,31 @@ button {
     cursor: pointer;
     padding: 10px 20px;
     border-radius: 4px;
-    transition: background-color 0.3s ease;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    width: fit-content;
 }
 
 button:hover {
     background-color: #45a049;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 /* Choices.js container styling */
 .choices {
-    width: 300px;
+    width: 250px;
 }
 
 .choices__inner {
     border: 1px solid #ccc;
     border-radius: 4px;
     min-height: 44px;
-    padding: 6px 10px;;
+    padding: 6px 10px;
     background: #fff;
     cursor: pointer;
-    box-sizing: border-box;
-    font-size: 12px;
-    z-index: 1000000;
+    font-size: 13px;
+    z-index: 10000000;
 }
 
 .choices__placeholder {
@@ -69,27 +90,23 @@ button:hover {
     font-style: italic;
 }
 
-/* Choices dropdown */
 .choices__list--dropdown,
 .choices__list[aria-expanded] {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    z-index: 1000000;
 }
 
-/* Choices items inside dropdown */
 .choices__item--choice {
     padding: 8px 10px;
-    font-size: 14px;
-    cursor: pointer;
+    font-size: 13px;
 }
 
 .choices__item--choice:hover {
     background: #f0f0f0;
 }
 
-/* Selected tags (multi-select items) */
+/* Selected tags */
 .choices__list--multiple .choices__item {
     background-color: #4CAF50;
     color: white;
@@ -101,17 +118,15 @@ button:hover {
     font-size: 13px;
 }
 
-/* Remove button inside selected tags */
 .choices__list--multiple .choices__item .choices__button {
     color: white;
     opacity: 0.8;
 }
-
 .choices__list--multiple .choices__item .choices__button:hover {
     opacity: 1;
 }
 
-/* Marker popup style */
+/* Marker popup */
 .place-marker {
     text-align: center;
     line-height: 20px;
@@ -119,14 +134,100 @@ button:hover {
 }
 
 /* Loader */
-.loading-message {
+#loadingMessage {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: white;
-    padding: 20px;
+    padding: 20px 30px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+    display: none;
+    font-weight: bold;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Intro Instructions */
+#introMessage {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4CAF50;
+    color: white;
+    padding: 15px 25px;
     border-radius: 5px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    z-index: 1000;
+    z-index: 1001;
+    cursor: pointer;
+    transition: opacity 0.5s ease;
 }
+
+/* Fade animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Desktop layout */
+.controls {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 15px 30px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #ddd;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Control Group */
+.control-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.control-group label {
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Make selects and buttons inline */
+select,
+.choices,
+button {
+    width: 200px;
+    max-width: 100%;
+}
+
+/* ---------------------------------- */
+/* Mobile styles */
+@media (max-width: 768px) {
+    .controls {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+        max-width: none;
+    }
+
+    select,
+    .choices,
+    button {
+        width: 100%;
+    }
+
+    .control-group label {
+        font-size: 14px;
+    }
+
+    #map {
+        height: 70vh;
+    }
+}
+
